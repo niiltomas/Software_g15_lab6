@@ -2,7 +2,7 @@
 
 # Recipe Management Application
 
-Link to Github Repository -> [https://github.com/niiltomas/Software_g15_lab6](url)
+Link to Github Repository -> [https://github.com/niiltomas/Software_g15_lab6]
 
 USED PROMPTS
 
