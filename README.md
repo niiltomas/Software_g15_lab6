@@ -53,7 +53,11 @@ SCREENSHOTS OF THE RESULT OF THE APPLICATION
 ![{24EF6D4D-B542-4789-9041-227AEA7751DB}](https://github.com/user-attachments/assets/3ed8bc43-a3a2-4178-830e-10e8cda14487)
 
 
-LESSONS LEANRED ON THE USE OF COPILOT
+LESSONS LEANRED ON THE USE OF COPILOT:
+- How to structure prompts clearly to receive accurate and useful code suggestions.
+- The importance of reviewing Copilot's output to ensure it matches the project requirements.
+- How Copilot can speed up repetitive coding tasks and improve productivity.
+- Learned limitations and best practices for integrating AI-assisted code in a React project.
 
 
 
