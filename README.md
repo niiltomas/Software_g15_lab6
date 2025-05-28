@@ -1,4 +1,11 @@
 # Software_g15_lab6
 
-# Recipe Management
+# Recipe Management Application
+
+USED PROMPTS
+
+
+SCREENSHOTS OF THE RESULT OF THE APPLICATION
+
+LESSONS LEANRED ON THE USE OF COPILOT
 
