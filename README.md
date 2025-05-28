@@ -1,3 +1,11 @@
 # Software_g15_lab6
 
-Test cases for the software_g15_lab6 repository.
+# Recipe Management Application
+
+USED PROMPTS
+
+
+SCREENSHOTS OF THE RESULT OF THE APPLICATION
+
+LESSONS LEANRED ON THE USE OF COPILOT
+
