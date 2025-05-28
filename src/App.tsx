@@ -15,6 +15,11 @@ const App: React.FC = () => {
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [lastAdded, setLastAdded] = useState<Recipe | null>(null);
 
+    // Search state
+    const [search, setSearch] = useState('');
+    const [filteredRecipes, setFilteredRecipes] = useState<Recipe[] | null>(null);
+    const [searchFeedback, setSearchFeedback] = useState('');
+
     useEffect(() => {
         const saved = localStorage.getItem(RECIPES_KEY);
         if (saved) setRecipes(JSON.parse(saved));
@@ -23,6 +28,27 @@ const App: React.FC = () => {
     useEffect(() => {
         localStorage.setItem(RECIPES_KEY, JSON.stringify(recipes));
     }, [recipes]);
+
+    // Real-time search effect
+    useEffect(() => {
+        if (search.trim() === '') {
+            setFilteredRecipes(null);
+            setSearchFeedback('');
+            return;
+        }
+        const lower = search.toLowerCase();
+        const matches = recipes.filter(
+            r =>
+                r.name.toLowerCase().includes(lower) ||
+                r.ingredients.some(ing => ing.toLowerCase().includes(lower))
+        );
+        setFilteredRecipes(matches);
+        setSearchFeedback(
+            matches.length > 0
+                ? `Found ${matches.length} recipe${matches.length > 1 ? 's' : ''} matching "${search}"`
+                : `No recipes found for "${search}"`
+        );
+    }, [search, recipes]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -66,6 +92,20 @@ const App: React.FC = () => {
         setShowConfirmation(false);
         setLastAdded(null);
     };
+
+    // Search handlers
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearch(e.target.value);
+    };
+
+    const handleUndoSearch = () => {
+        setSearch('');
+        setFilteredRecipes(null);
+        setSearchFeedback('');
+    };
+
+    // Recipes to display
+    const recipesToShow = filteredRecipes !== null ? filteredRecipes : recipes;
 
     return (
         <div className="app-container">
@@ -131,10 +171,31 @@ const App: React.FC = () => {
                     )}
                 </section>
 
+                <section className="search-section">
+                    <h2>Search Recipes</h2>
+                    <div className="search-row">
+                        <input
+                            type="text"
+                            value={search}
+                            onChange={handleSearchChange}
+                            placeholder="Search by name or ingredient..."
+                            className="search-input"
+                        />
+                        {search && (
+                            <button onClick={handleUndoSearch} className="undo-search-btn" type="button">
+                                Undo Search
+                            </button>
+                        )}
+                    </div>
+                    {searchFeedback && (
+                        <div className="search-feedback">{searchFeedback}</div>
+                    )}
+                </section>
+
                 <section className="recipes-section">
                     <h2>Recipes</h2>
                     <ul className="recipes-list">
-                        {recipes.map((r, idx) => (
+                        {recipesToShow.map((r, idx) => (
                             <li key={idx} className="recipe-card">
                                 <strong>{r.name}</strong>
                                 <div>
