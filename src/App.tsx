@@ -45,6 +45,11 @@ const App: React.FC = () => {
     const [showEditConfirmation, setShowEditConfirmation] = useState(false);
     const [lastEdited, setLastEdited] = useState<{ idx: number, recipe: Recipe } | null>(null);
 
+    // Delete state
+    const [pendingDeleteIdx, setPendingDeleteIdx] = useState<number | null>(null);
+    const [lastDeleted, setLastDeleted] = useState<{ idx: number, recipe: Recipe } | null>(null);
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+
     useEffect(() => {
         const saved = localStorage.getItem(RECIPES_KEY);
         if (saved) setRecipes(JSON.parse(saved));
@@ -258,6 +263,35 @@ const App: React.FC = () => {
         setRecipes(updated);
         setShowEditConfirmation(false);
         setLastEdited(null);
+    };
+
+    // Delete handlers
+    const handleDeleteRequest = (idx: number) => {
+        setPendingDeleteIdx(idx);
+        setShowDeleteConfirmation(true);
+    };
+
+    const handleDeleteConfirm = () => {
+        if (pendingDeleteIdx === null) return;
+        const deletedRecipe = recipes[pendingDeleteIdx];
+        const updated = recipes.filter((_, i) => i !== pendingDeleteIdx);
+        setRecipes(updated);
+        setLastDeleted({ idx: pendingDeleteIdx, recipe: deletedRecipe });
+        setPendingDeleteIdx(null);
+        setShowDeleteConfirmation(false);
+    };
+
+    const handleDeleteCancel = () => {
+        setPendingDeleteIdx(null);
+        setShowDeleteConfirmation(false);
+    };
+
+    const handleUndoDelete = () => {
+        if (!lastDeleted) return;
+        const updated = [...recipes];
+        updated.splice(lastDeleted.idx, 0, lastDeleted.recipe);
+        setRecipes(updated);
+        setLastDeleted(null);
     };
 
     // Search handlers
@@ -482,7 +516,20 @@ const App: React.FC = () => {
                                                 ))}
                                             </ol>
                                         </div>
-                                        <button className="add-ingredient-btn" style={{marginTop: '10px'}} onClick={() => startEdit(idx)}>Edit</button>
+                                        <button
+                                            className="add-ingredient-btn"
+                                            style={{ marginTop: '10px', marginRight: '8px' }}
+                                            onClick={() => startEdit(idx)}
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
+                                            className="remove-ingredient-btn"
+                                            style={{ fontSize: '1rem', color: '#b71c1c', marginTop: '10px' }}
+                                            onClick={() => handleDeleteRequest(idx)}
+                                        >
+                                            Delete
+                                        </button>
                                     </>
                                 )}
                             </li>
@@ -492,6 +539,19 @@ const App: React.FC = () => {
                         <div className="confirmation">
                             Recipe updated!
                             <button onClick={handleUndoEdit} className="undo-btn">Undo</button>
+                        </div>
+                    )}
+                    {showDeleteConfirmation && (
+                        <div className="confirmation" style={{ background: '#fff3e0', color: '#b71c1c', border: '1.5px solid #ffb347' }}>
+                            Are you sure you want to delete this recipe?
+                            <button onClick={handleDeleteConfirm} className="undo-btn" style={{ color: '#fff', background: '#e57373', borderColor: '#e57373' }}>Yes, Delete</button>
+                            <button onClick={handleDeleteCancel} className="undo-btn">Cancel</button>
+                        </div>
+                    )}
+                    {lastDeleted && (
+                        <div className="confirmation" style={{ background: '#ffe0b2', color: '#b71c1c', border: '1.5px solid #ffb347' }}>
+                            Recipe deleted!
+                            <button onClick={handleUndoDelete} className="undo-btn">Undo</button>
                         </div>
                     )}
                 </section>
